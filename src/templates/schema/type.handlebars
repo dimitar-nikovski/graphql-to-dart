@@ -1,41 +1,41 @@
 {{~#*inline "fieldsClass" ~}}
 {{ multilineComment description }}
-class {{ className }}  {{ classExtends interfaces=(wrapFields interfaces) }} {
+class {{ className }} {{ classExtends interfaces=(wrapFields interfaces) }} {
 
-  {{#each fields}}{{#if type}}{{#if name}}
-  {{#if description }}{{ multilineComment description }}
-  {{/if}}
-  {{ resolveType type
+{{#each fields}}{{#if type}}{{#if name}}
+{{#if description }}{{ multilineComment description }}
+{{/if}}
+{{ resolveType type
       "inline"
       (takeFirst contextName ../contextName)
       (takeFirst contextModels ../contextModels)
       isArray
       raw
       ../name
-  }} {{ dartName name }};
-  {{~/if}}{{/if}}{{/each}}
+  }} {{ camelCase (dartName name) }};
+{{~/if}}{{/if}}{{/each}}
 
-  {{ className }}({
-    {{#each fields}}{{#if name}}
-      this.{{ dartName name }},
-    {{/if}}{{/each}}
-  });
+{{ className }}({
+{{#each fields}}{{#if name}}
+this.{{ camelCase (dartName name) }},
+{{/if}}{{/each}}
+});
 
-  /// Adds all fields from [other] to this `{{ className }}`.
-  /// 
-  /// pre-existing values are not overwritten unless `overwrite: true`
-  void addAll(covariant {{ className }} other, { bool overwrite = true, }) {
-    assert(other != null, "Cannot add all from null into $this");
-    if (overwrite != null && overwrite){
-      {{#each fields}}{{#if name}}
-      {{ dartName name }} = other.{{ dartName name }} ?? {{ dartName name }};
-      {{~/if}}{{/each}}
-    } else {
-      {{#each fields}}{{#if name}}
-      {{ dartName name }} ??= other.{{ dartName name }};
-      {{~/if}}{{/each}}
-    }
-  }
+/// Adds all fields from [other] to this `{{ className }}`.
+///
+/// pre-existing values are not overwritten unless `overwrite: true`
+void addAll(covariant {{ className }} other, { bool overwrite = true, }) {
+assert(other != null, "Cannot add all from null into $this");
+if (overwrite != null && overwrite){
+{{#each fields}}{{#if name}}
+{{ camelCase (dartName name) }} = other.{{ camelCase (dartName name) }} ?? {{ camelCase (dartName name) }};
+{{~/if}}{{/each}}
+} else {
+{{#each fields}}{{#if name}}
+{{ camelCase (dartName name) }} ??= other.{{ camelCase (dartName name) }};
+{{~/if}}{{/each}}
+}
+}
 }
 {{~/inline~}}
 
@@ -52,62 +52,62 @@ class {{ className }}  {{ classExtends interfaces=(wrapFields interfaces) }} {
 {{ multilineComment description }}
 /// NOTE: You can add unexposed fields with `addAll`
 class {{ name }} {{ classExtends interfaces=interfaces }} {
-  static final String typeName = "{{ takeFirst typeName name }}";
+static final String typeName = "{{ takeFirst typeName name }}";
 
-  @protected
-  covariant _{{ name }}Fields fields;
+@protected
+covariant _{{ name }}Fields fields;
 
-  {{name}}(
-    {{#emptySafeEach fields
+{{name}}(
+{{#emptySafeEach fields
       required='name'
       prefix='{'
       delimiter=','
       suffix=', }'
     }}
-      {{ resolveType type
+{{ resolveType type
         "inline"
         (takeFirst contextName ../contextName)
         (takeFirst contextModels ../contextModels)
         isArray
         raw
         ../name
-      }} {{ dartName name }}
-    {{/emptySafeEach}}
-  ): fields = _{{ name }}Fields(
-    {{#each fields}}
-    {{ dartName name }}: {{ dartName name }},
-    {{/each}}
-  );
+      }} {{ camelCase (dartName name) }}
+{{/emptySafeEach}}
+): fields = _{{ name }}Fields(
+{{#each fields}}
+{{ camelCase (dartName name) }}: {{ camelCase (dartName name) }},
+{{/each}}
+);
 
-  /// Adds all fields from [other] to this `{{ name }}`.
-  /// 
-  /// pre-existing values are not overwritten unless `overwrite: true`
-  void addAll(covariant {{ name }} other, { bool overwrite = true, }) =>
-    fields.addAll(other.fields, overwrite: overwrite);
+/// Adds all fields from [other] to this `{{ name }}`.
+///
+/// pre-existing values are not overwritten unless `overwrite: true`
+void addAll(covariant {{ name }} other, { bool overwrite = true, }) =>
+fields.addAll(other.fields, overwrite: overwrite);
 
-  /// Creates a copy of this `{{ name }}`
-  {{ name }} copy() => {{ name }}()..addAll(this);
+/// Creates a copy of this `{{ name }}`
+{{ name }} copy() => {{ name }}()..addAll(this);
 
-  @protected
-  Set<String> get missingRequiredFields {
-    Set<String> missingFields = Set();
+@protected
+Set<String> get missingRequiredFields {
+  Set<String> missingFields = Set();
     {{#each fields}}
     {{~#if isRequired}}
-    if (fields.{{ dartName name }}  == null){
-        missingFields.add("{{ dartName name }}");
+    if (fields.{{ camelCase (dartName name) }} == null){
+    missingFields.add("{{ camelCase (dartName name) }}");
     }
     {{/if}}
     {{/each}}
     return missingFields;
-  }
+    }
 
-  void validate(){
+    void validate(){
     final missing = missingRequiredFields;
-    assert(missing.isEmpty, "$runtimeType#$hashCode is missing required fields $missing"); 
-  }
+    assert(missing.isEmpty, "$runtimeType#$hashCode is missing required fields $missing");
+    }
 
-  bool get isValid => missingRequiredFields.isEmpty;
+    bool get isValid => missingRequiredFields.isEmpty;
 
-}
+    }
 
-{{/unless}}
+    {{/unless}}
